@@ -1,0 +1,7 @@
+a = first term
+d = t2-t1
+tn = l = last term
+tn = a + (n-1)d
+sn = n(a+l)/2
+
+sn = n[ 2a+ (n-1)d]/2
