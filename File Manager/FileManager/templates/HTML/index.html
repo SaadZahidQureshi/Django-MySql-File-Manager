@@ -25,22 +25,23 @@
 <nav class="navbar navbar-bottom-shadow">
   <div class="container-fluid">
     <div class="navbar-header">
-        <a class="navbar-brand" href="#">
-            <img src="{% static 'images/icons/logo.jpg' %}" width="30" height="30" alt="">
+        <a class="navbar-brand" id="logo" href="#">
+            <img src="{% static 'images/icons/logo.jpg' %}" width="30" height="30"  alt="">
           </a>
     </div>
 
     <ul class="nav navbar-nav navbar-right">
-      <li><a href="{%url 'logout'%}"> Logout <span class="glyphicon glyphicon-log-in"></span></a></li>
-      <li><a href="#"><span class="glyphicon glyphicon-user"></span> 
+      <li id="user-resp"><a href="" class="username-profile"><span class="glyphicon glyphicon-user"></span> 
         {% if request.session.email %}
         {{request.session.username}}
-        {{request.session.email}}
+        <!-- {{request.session.email}} -->
         
         
         {%endif%}
     
     </a></li>
+      <li id="logout-resp"><a href="{%url 'logout'%}" class="username-profile" > Logout <span class="glyphicon glyphicon-log-in"></span></a></li>
+      
 
     </ul>
   </div>
@@ -54,16 +55,18 @@
     </div>
     <div class="navbar-brand  " style="margin-left: 33%;">
       
-      <form class="form-inline">
+      <form class="form-inline" method="">
+              <!-- {{ form.search_query.label_tag }}
+              {{ form.search_query }} -->
           <input class="form-control " type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Filters</button>
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">search</button>
         </form>
 
     </div>
 
    <div>
       <ul class="nav navbar-nav navbar-right">
-          <li><a href="" data-target="#exampleModal" data-toggle="modal"> upload file </a></li>
+          <li ><a href=""id="upload-file" data-target="#exampleModal" data-toggle="modal"> <span class="	glyphicon glyphicon-circle-arrow-up" style="padding-right: 3px; "></span>upload file </a></li>
           <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
@@ -100,8 +103,10 @@
                             {%endfor%}
                         </div>
     
-                      <button type="button" class="btn btn-primary " style="width: 49%; background: red;" data-dismiss="modal">Cancel</button>
+                      <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-primary " style="width: 49%; background: red;" data-dismiss="modal">Cancel</button>
                       <button type="submit" class="btn btn-primary " style="width: 49%; background: #4ba2f4;"  >Save</button>
+                      </div>
                     <!-- </div> -->
                   </form>
                 </div>
@@ -203,20 +208,15 @@ function move() {
           {% for file in files %}
           <tr>
             <!-- <th scope="row">1</th> -->
-            <td>{{file.title}}</td>
+            <td><li><a href="{% url 'view_document' file_id=file.id %}" target="_blank"><span class="glyphicon glyphicon-file" style="padding-right: 3px; "></span>{{file.title}}</a></li></td>
             <td>{{file.description}}</td>
             <td><li><a href="{% url 'download_file' file_id=file.id %}"><span class="glyphicon glyphicon-circle-arrow-down" style="padding-right: 3px; "></span>{{file.file}}</a></li></td>
           </tr>
+          <!-- {% empty %}
           <tr>
-            <!-- <th scope="row">2</th>/ -->
-            
-
-          </tr>
-          <tr>
-            <!-- <th scope="row">3</th> -->
-            
-
-          </tr> {% endfor %}
+            <td colspan="2">No files found.</td>
+        </tr> -->
+           {% endfor %}
         </tbody>
 
        

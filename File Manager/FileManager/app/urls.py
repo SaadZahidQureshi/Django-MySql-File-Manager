@@ -10,6 +10,8 @@ urlpatterns = [
     path('index', views.Index, name='index'),
     path('logout', views.Logout, name='logout'),
     path('download/<int:file_id>/', views.download_file, name='download_file'),
+    path('view/<int:file_id>/', views.view_document, name='view_document'),
+    # path('file_list/', views.file_list, name='file_list'),
     # path('uploadfile', views.UploadFile, name='uploadfile'),
 
 ]

@@ -11,3 +11,7 @@ class fileForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             field.widget.attrs.update({'class': 'form-control'})
 
+
+
+# class FileSearchForm(forms.Form):
+#     search_query = forms.CharField(max_length=100, required=False, label='Search Files')

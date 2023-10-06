@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.models import User, auth
-from django.contrib.auth import authenticate, login
 from .models import User, File
 from django.contrib import messages, sessions
 from app.forms import fileForm
-from app.handle_file import handle_uploaded_file
+from django.shortcuts import get_object_or_404
+from mimetypes import guess_type 
+# from .forms import FileSearchForm
 # Create your views here.
 
 
@@ -51,7 +52,6 @@ def SignUp(request):
     else:
         return render(request, 'HTML/Signup.html')
 
-
 def Index(request):
     if request.method == 'POST':
         if 'file' in request.FILES:
@@ -66,23 +66,28 @@ def Index(request):
             messages.error(request, 'No file was uploaded.')
     else:
         form = fileForm()
-
     files = File.objects.all()
-    return render(request, 'HTML/index.html', {'form': form, 'files': files})
+    return render(request, 'HTML/index.html', {'form': form, 'files': files, })
+
+    # form1 = FileSearchForm(request.GET)
+  
+    # if form1.is_valid():
+    #     search_query = form1.cleaned_data.get('search_query')
+    #     if search_query:
+    #         # Filter files based on the search query (customize this query as needed)
+    #         files1 = files.filter(title__icontains=search_query)
+
 
     # return render(request, 'HTML/index.html',{'form': form})
     # if request.method == 'POST':
-
 
 def Logout(request):
     del request.session['email']
     del request.session['username']
     return redirect('login')
 
-
-
-
 def download_file(request, file_id):
+
     try:
         # Retrieve the file from the database
         file_obj = File.objects.get(id=file_id)
@@ -98,3 +103,40 @@ def download_file(request, file_id):
     except File.DoesNotExist:
         # Handle the case where the file is not found
         return HttpResponse('File not found', status=404)
+    
+def view_document(request, file_id):
+
+    try:
+        # Retrieve the document from the database
+        file_obj = get_object_or_404(File, id=file_id)
+
+        # Determine the content type based on file extension
+        content_type, _ = guess_type(file_obj.file.name)
+        
+        if content_type is None:
+            content_type = 'application/octet-stream'  # Default to binary data
+
+        # Open the document and read its content
+        with file_obj.file.open('rb') as document_content:
+            response = HttpResponse(document_content.read(), content_type=content_type)
+        
+        # Set the Content-Disposition header to prompt download
+        response['Content-Disposition'] = f'attachment; filename="{file_obj.file.name}"'
+        
+        return response
+    except File.DoesNotExist:
+        # Handle the case where the document is not found
+        return HttpResponse('Document not found', status=404)
+    
+
+def file_list(request):
+    form = FileSearchForm(request.GET)
+    files = File.objects.all()
+
+    if form.is_valid():
+        search_query = form.cleaned_data.get('search_query')
+        if search_query:
+            # Filter files based on the search query (customize this query as needed)
+            files = files.filter(title__icontains=search_query)
+
+    return render(request, 'file_list.html', {'form': form, 'files': files})
